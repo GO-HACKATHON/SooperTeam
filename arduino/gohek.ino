@@ -15,6 +15,8 @@ const int switchstart = 6;
 const int switchbuzz = 5;
 const int sensorgetar = 12;
 int ign = 0;
+int bukanpakogah = 0;
+int timerpakogah = 0;
 
 void setup()
 {
@@ -58,31 +60,29 @@ void loop()
       analogWrite(switchon, LOW);
       ign = 0;
       bluetooth.println("mati");
-    }
-    int sensorgetarStatus = digitalRead(sensorgetar);
-    bluetooth.println(sensorgetarStatus);
-    if (sensorgetarStatus == 1 && ign == 0)
-    {
-      bluetooth.println("getar");
-      bipbip(60, 500);
+    } else if (command == "d") {
+      bipbip(3, 500);
     }
     command = "";
+  }
+  int sensorgetarStatus = digitalRead(sensorgetar);
+  if (sensorgetarStatus == 1 && ign == 0)
+  {
+    analogWrite(switchon, LOW);
+    bipbip(60, 500);
   }
 }
 
 void bipbip(int times, int delays)
 {
-  // looping berapa kali buzzer akan dihidupkan
   int i = 0;
   for (i; i < times; i++)
   {
-    // membunyikan buzzer berdasarkan frekuensi nya
     analogWrite(switchbuzz, HIGH);
     delay(delays);
     analogWrite(switchbuzz, LOW);
     delay(delays);
 
-    // jika ada perintah blueetooth
     if (bluetooth.available()) {
       while (bluetooth.available())
       {
@@ -95,6 +95,7 @@ void bipbip(int times, int delays)
       }
       if (command == "c") {
         analogWrite(switchon, LOW);
+        bukanpakogah = 0;
         ign = 0;
         command = "";
         bluetooth.println("mati");
